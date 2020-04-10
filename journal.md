@@ -1,45 +1,131 @@
 # This is my journal
 
-   What are some ways in which Computer Science can help the fight against Covid-19?
+Bears:
+```py
+x = ()
 
-   There are many ways in which Computer Science can help the fight against Covid-19. The most obvious benefit I can think of is creating digital models to simulate the progression of the virus, however there are also other possibilities. Ideas of note include games to teach children about social distancing, an app that senses other phones and can tell you if you're closer than 6 feet to someone holding a digital device, and moving struggling buisnesses from brick-and-mortar stores online. There are, of course, an almost infinete set of possibilities, however, these are the first ones that came to mind.
+for x in range (1):
+    print 'bears', (x)
+for x in range (1,2):
+    print 'bear', (x)
+for x in range (2, 101):
+    print 'bears', (x)
+```
+The year is code
+```py
+x = ()
 
-   In your opinion, should people enable access to the resources of their personal computers as tools for research? Are there any risks?
+for x in range (1900, 2001):
+    print 'The year is', (x)
+```
+Celcius to Farenheit
+```py
+for C in range (100):
+    F = C * 1.8 + 32
+    print C,'C are', 'F', F
+```
+3. Complete the table below for 5 different simulation where the number of people moving changes 
 
-   I don't believe that people either should or shouldn't enable access to the resources of their personal computers as tools for research, however I believe that there should be an option avaliable for people to volunteer their services if they would like too. The risks involve people having their information stolen, or corrupting the data, or a bunch of other issues that essentially boil down to people attempting to undermine other people. 
+Case Number 1: 
+   Number of people moving: 1
+   Population Size: 25
+   Iterations until complete infection: 2597
+Case Number 2:
+   Number of people moving: 3
+   Population Size: 25
+   Iterations until complete infection: 860
+Case Number 3:
+   Number of people moving: 8
+   Population Size: 25
+   Iterations until complete infection: 153
+Case Number 4:
+   Number of people moving: 12
+   Population Size: 25
+   Iterations until complete infection: 91
+Case Number 5:
+   Number of people moving: 17
+   Population Size: 25
+   Iterations until complete infection: 98
    
-   What should be some behaviours (at least 3) that we will need to include in our simulation to be a realistic approximation of the current situation in the world? Explain.
    
-   1. People quarantining themselves. As the virus spreads, people will be isolating themselves in the hope of preventing themselves from catching the virus. 
-   2. People going to gatherings. The virus's reach increases exponentially when large social gathering's take place.
-   3. Remenants. People also leave the virus on the items they touch. Since this is the case, the virus should be left behind in the area's the simulated people have just been.
-   
-   What did we do?
-   
-First, we read an article on how Computer Science can help fight Coronavirus. Then we answered 2 questions adressing our thoughts on the role of computer science in fighting Coronavirus. We were then shown the lessons plan for the next few weeks. We were then given a tutorial on how to begin a simulation of the epidemiological affects of the Coronavirus, along with two challanges and another question about our thoughts on the simulation. The code and the completed challange code can be seen below.
+4. What conclusion can you draw from the simulations you run in step 3. Explain.
+
+The more people move, the faster everyone gets infected. To vizualize this let us take the example of only 1 person moving. This means that this 1 moving person needs to visit every other person. If we move on to two people, once this second person gets infected and starts moving, now there are two people who not only have the infection, but can spread it. So this simulation represents the duality of an infection. It's not only about who have you infected; It's about who they can spread it to.
+
+5. Propose another table of simulations. Variables we can change include: population size, distance of infection, movement size, number of people moving.  
+
+Distance if infection: 10
+Population Size: Varies 
+Number of people moving: 10
+Area: (2000, 2000)
+
+
+What did we do?
+We learned about forward loops, and did mini coding segments in order to familiarize ourselves with them. We updated the infection code so the infection could spread between people, and we ran trial simulations to see how the spread of the infection changed when the number of people moving changed. We then answered some questions about the trial. Below is the updated infection code.
 ```py
 # definition of variables
-x = [100,150,200,250,240,260,300,350,400,450]
-y= [100,150,200,250,240,260,300,350,400,450]
-    
+x = []
+y= []
+per = [False, True] #False=>infected
+inf = 0
+hel = 25
+con = 0
+bar = 0
 
 def setup():
     size(500,500)
-    for x in range (10):
-        x = random (500, 500)
+    for n in range (25):
+        x.append(random(0, 500))
+        per.append(True) #All Healthy
+        y.append(random(0, 500))
+        barGraph()
+        
 
-        y = random (500,500)
+        
+def distance(x1, x2, y1, y2):
+    a = (x1 - x2)
+    b = (y1 - y2)
+    c = sqrt(a**2 + b**2)
+    return c
+
+
+    
     
 def draw():
-    global x, y
+    global x, y, inf, hel, con, l
     background(255)
     strokeWeight(2)
+    barGraph()
+    con += 1
+    if inf == 25:
+        con -= 1
+
+
     
     #create 1st individual
-    for i in range(10):
+    for i in range(0, 25):
+        if per[i] == True:
+            fill(255) #healthy
+        else:
+            fill (0, 200, 0) #infected
+
+            
+            
         circle(x[i], y[i], 40)
-        x[i] = x[i] + random(-10, 10)
-        y[i] = y[i] + random(-10, 10)
+        
+        x[0] = x[0] + random(-10, 10)
+        y[0] = y[0] + random(-10, 10)
+
+        
+        for g in range(len(x)):
+            if g == i:
+                continue
+            d = distance(x[i], x[g], y[i], y[g])
+            if d < 40 and (per[g] == False or per[i]== False):
+                #infection happens
+                per[i] = False
+                per[g] = False
+
         
         #boundaries conditions
         if x[i] > 500:
@@ -55,13 +141,34 @@ def draw():
     
         if y[i] < 0:
             y[i] = 0
-    delay(100)
-```
+            
+    inf = 0
+    hel = 25
+    for bar in range (25):
+        if per[bar] == False:
+            inf += 1
+            hel -= 1
+            
+    textSize(10)
+    fill(0)
+    text("Infected", 445, 478)
+    text("Healthy", 445, 458)
+    text (con, 80, 470)
+    text("Iteration #:", 20, 470)
+    
 
-  Q2. What did I learn?
-    
-  I learned that brackets are used to create lists. I learned how to make a forward loop. I learned what the lesson plan for the next few weeks is. I gained a better understanding of the global command. I learned how to set boundaries.
-    
-  Q3. What questions do I have?
-  
-  What is the final product going to look like? Are we going to be building off the same code for the next few weeks? What are epidemiologists doing to simulate the potential path of the Coronavirus?
+def barGraph():
+    strokeWeight(1)
+    stroke(0)
+    fill(255, 0, 0)
+    rect (440, 470, -inf*2, 8)
+    fill (255)
+    rect (440, 450, -hel*2, 8)
+```
+This code almost exactly follows the lesson plan, however one innovation I made was making the counter stop after every single circle was infeted. This made it so that I could tell on exactly what iteration every person was infected. This made filling out the simulation table much easier.
+
+What did I learn?
+I learned about forward loops. I learned how to use different operators. I learned how the movement of individuals contributes to the spread of an infection. 
+
+What questions do I have?
+What is the next task going to be? What different kinds of operators are there? 
